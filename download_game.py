@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# example: 0020901003
+# this script downloads the actual game log for a specific game ID.
 
 from statsnba.api import Api
 import pandas as pd
@@ -31,4 +31,5 @@ if __name__ == '__main__':
     else:
         df.to_excel(args.output)
 
+    # Add sleep to avoid hitting nba.com rate limits
     time.sleep(1)

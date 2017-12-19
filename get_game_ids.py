@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# example: 0020901003
+# this script downloads the list of game IDs for a specific season.
 
 from statsnba.api import Api
 import pandas as pd
@@ -15,19 +15,21 @@ parser.add_argument('-o', '--output', required=True,
                     default='output', help='file to save')
 
 parser.add_argument('-f', '--format', dest='format',
-                    default='excel', choices={'csv', 'excel'}, action='store')
+                    default='csv', choices={'csv', 'excel'}, action='store')
+
+parser.add_argument('-t', '--type', required=False,
+                    default='Regular Season', choices={'Regular Season', 'Playoffs'}, help='season type: "Regular Season" or "Playoffs"')
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    season_type = 'Playoffs'
 
-    print 'Downloading game ids for season {0}'.format(args.season)
+    print('Downloading game ids for %s %s' % (args.season, args.type))
 
     api = Api()
-    result = api.GetSeasonGameIDs(args.season, season_type)
+    result = api.GetSeasonGameIDs(args.season, args.type)
     df = pd.DataFrame(result)
 
-    print 'Saving to {0}'.format(args.output)
+    print('Saving data to %s' % args.output)
 
     if args.format == 'csv':
         df.to_csv(args.output)
