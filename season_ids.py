@@ -19,7 +19,7 @@ parser.add_argument('-f', '--format', dest='format',
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    season_type = 'Regular Season'
+    season_type = 'Playoffs'
 
     print 'Downloading game ids for season {0}'.format(args.season)
 
