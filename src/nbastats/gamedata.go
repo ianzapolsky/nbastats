@@ -171,9 +171,10 @@ func (gd *GameEvent) IsFTM() bool {
 
 type playerData struct {
 	Name                      string
-	TotalMakes, TotalChances  int
-	ColdMakes, ColdChances    int
-	HotMakes, HotChances      int
+	NumSeasons                float64
+	TotalMakes, TotalChances  float64
+	ColdMakes, ColdChances    float64
+	HotMakes, HotChances      float64
 	TotalPct, ColdPct, HotPct float64
 	HotColdDiff, HotMakeup    float64
 }
@@ -213,19 +214,48 @@ func (pd *playerData) toRow() []string {
 	return row
 }
 
-func getHeaderRow() []string {
-	return []string{
-		"Name",
-		"Total 3P Made",
-		"Total 3P Att",
-		"Total 3P%",
-		"Cold 3P Made",
-		"Cold 3P Att",
-		"Cold 3P%",
-		"Hot 3P Made",
-		"Hot 3P Att",
-		"Hot 3P%",
-		"Hot/Cold Diff",
-		"Hot Shot Makeup",
+func (pd *playerData) toRowAveragedOverSeasons() []string {
+	if pd.TotalChances != 0 {
+		pd.TotalMakes = pd.TotalMakes / pd.NumSeasons
+		pd.TotalChances = pd.TotalChances / pd.NumSeasons
+		pd.ColdMakes = pd.ColdMakes / pd.NumSeasons
+		pd.ColdChances = pd.ColdChances / pd.NumSeasons
 	}
+	if pd.HotChances != 0 {
+		pd.HotMakes = pd.HotMakes / pd.NumSeasons
+		pd.HotChances = pd.HotChances / pd.NumSeasons
+	}
+
+	if pd.TotalChances == 0 {
+		pd.TotalPct = 0
+		pd.ColdPct = 0
+		pd.HotPct = 0
+		pd.HotMakeup = 0
+	} else if pd.HotChances == 0 {
+		pd.TotalPct = (float64(pd.TotalMakes) / float64(pd.TotalChances)) * 100
+		pd.ColdPct = (float64(pd.ColdMakes) / float64(pd.ColdChances)) * 100
+		pd.HotMakeup = -1
+	} else {
+		pd.TotalPct = (float64(pd.TotalMakes) / float64(pd.TotalChances)) * 100
+		pd.ColdPct = (float64(pd.ColdMakes) / float64(pd.ColdChances)) * 100
+		pd.HotPct = (float64(pd.HotMakes) / float64(pd.HotChances)) * 100
+		pd.HotMakeup = (float64(pd.HotChances) / float64(pd.TotalChances)) * 100
+	}
+	pd.HotColdDiff = pd.HotPct - pd.ColdPct
+
+	row := []string{
+		pd.Name,
+		fmt.Sprintf("%v", pd.TotalMakes),
+		fmt.Sprintf("%v", pd.TotalChances),
+		fmt.Sprintf("%v", pd.TotalPct),
+		fmt.Sprintf("%v", pd.ColdMakes),
+		fmt.Sprintf("%v", pd.ColdChances),
+		fmt.Sprintf("%v", pd.ColdPct),
+		fmt.Sprintf("%v", pd.HotMakes),
+		fmt.Sprintf("%v", pd.HotChances),
+		fmt.Sprintf("%v", pd.HotPct),
+		fmt.Sprintf("%v", pd.HotColdDiff),
+		fmt.Sprintf("%v", pd.HotMakeup),
+	}
+	return row
 }

@@ -7,6 +7,23 @@ import (
 
 const HOT_SEC int = 60 * 2
 
+func getHotColdHeaderRow() []string {
+	return []string{
+		"Name",
+		"Total 3P Made",
+		"Total 3P Att",
+		"Total 3P%",
+		"Cold 3P Made",
+		"Cold 3P Att",
+		"Cold 3P%",
+		"Hot 3P Made",
+		"Hot 3P Att",
+		"Hot 3P%",
+		"Hot/Cold Diff",
+		"Hot Shot Makeup",
+	}
+}
+
 func collectHotColdStatsFromSeasonForPlayer(m map[string]*playerData, season *Season, player string) {
 	log.Printf("collecting stats for %v from season %v", player, season.Id)
 
@@ -63,12 +80,12 @@ func collectHotColdStatsFromSeasonForPlayer(m map[string]*playerData, season *Se
 
 	playerData := &playerData{
 		Name:         player,
-		TotalMakes:   totalMakes,
-		TotalChances: totalChances,
-		ColdMakes:    coldMakes,
-		ColdChances:  coldChances,
-		HotMakes:     hotMakes,
-		HotChances:   hotChances,
+		TotalMakes:   float64(totalMakes),
+		TotalChances: float64(totalChances),
+		ColdMakes:    float64(coldMakes),
+		ColdChances:  float64(coldChances),
+		HotMakes:     float64(hotMakes),
+		HotChances:   float64(hotChances),
 	}
 
 	lookup, ok := m[player]

@@ -54,14 +54,14 @@ func main() {
 	for _, season := range seasons {
 		for _, player := range season.Players {
 			collectHotColdStatsFromSeasonForPlayer(masterMap, season, player)
+			masterMap[player].NumSeasons += 1
 		}
 	}
 
+	writer.Write(getHotColdHeaderRow())
 	for _, p := range masterMap {
-		writer.Write(p.toRow())
+		//writer.Write(p.toRow())
+		writer.Write(p.toRowAveragedOverSeasons())
 	}
 	log.Printf("wrote %v rows to output %v", len(masterMap), outputFile)
-}
-
-func collectStatsFromSeason(m map[string]*playerData, season *Season) {
 }
